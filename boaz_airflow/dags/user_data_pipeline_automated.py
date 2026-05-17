@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import os
 
 # 실습 시 주의사항: S3_BUCKET_NAME을 본인이 생성한 버킷 이름으로 수정해야 합니다.
-S3_BUCKET_NAME = "boaz-week17-lab"
+S3_BUCKET_NAME = "만든 버킷 주소"
 
 default_args = {
     'owner': 'boaz',
