@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.DS_Store
+postgres_data/
+logs/
+plugins/
+*.env
+통합_실습_가이드라인.md
+가이드라인.md
+기획안.md
+실습_가이드라인_이전버전(자동화).md
+실습_가이드라인_최종.md

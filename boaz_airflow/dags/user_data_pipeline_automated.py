@@ -1,11 +1,12 @@
 from airflow import DAG
 from airflow.decorators import task
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
+from airflow.providers.amazon.aws.operators.athena import AthenaOperator
 from datetime import datetime, timedelta
 import os
 
 # 실습 시 주의사항: S3_BUCKET_NAME을 본인이 생성한 버킷 이름으로 수정해야 합니다.
-S3_BUCKET_NAME = "boaz-user-lab-yourname"
+S3_BUCKET_NAME = "boaz-week17-lab"
 
 default_args = {
     'owner': 'boaz',
@@ -14,12 +15,12 @@ default_args = {
 }
 
 with DAG(
-    dag_id='user_data_pipeline_manual',
+    dag_id='user_data_pipeline_automated',
     default_args=default_args,
     start_date=datetime(2024, 4, 1),
     schedule_interval='@daily',
     catchup=False,
-    tags=['BOAZ', 'Hands-on', 'Manual'],
+    tags=['BOAZ', 'Hands-on', 'Automated'],
 ) as dag:
 
     @task
@@ -28,14 +29,14 @@ with DAG(
         local_path = '/opt/airflow/data/data.json'
         if not os.path.exists(local_path):
             raise FileNotFoundError(f"Data file not found at {local_path}")
-        print(f"Successfully located local data: {local_path}")
         return local_path
 
     @task
-    def upload_to_s3(file_path):
-        """2단계: 로컬 파일을 S3의 raw/ 폴더로 업로드합니다."""
+    def upload_to_s3(file_path, **context):
+        """2단계: 로컬 파일을 S3에 dt=YYYY-MM-DD 파티션 구조로 자동 업로드"""
         hook = S3Hook(aws_conn_id='aws_default')
-        s3_key = "raw/user_data/data.json"
+        dt = context['ds']
+        s3_key = f"raw/user_data_auto/dt={dt}/data.json"
         
         hook.load_file(
             filename=file_path,
@@ -45,6 +46,15 @@ with DAG(
         )
         print(f"Successfully uploaded to s3://{S3_BUCKET_NAME}/{s3_key}")
 
+    # 3단계: Athena 테이블 파티션 자동 갱신
+    repair_athena_table = AthenaOperator(
+        task_id='repair_athena_table',
+        query="MSCK REPAIR TABLE user_data_auto_lake;",
+        database='default',
+        output_location=f"s3://{S3_BUCKET_NAME}/athena-results/",
+        aws_conn_id='aws_default'
+    )
+
     # 파이프라인 흐름 정의
     data_file = check_local_data()
-    upload_to_s3(data_file)
+    upload_to_s3(data_file) >> repair_athena_table
