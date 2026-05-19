@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import os
 
 # 실습 시 주의사항: S3_BUCKET_NAME을 본인이 생성한 버킷 이름으로 수정해야 합니다.
-S3_BUCKET_NAME = "만든 버킷 주소"
+S3_BUCKET_NAME = "boaz-lab"
 
 default_args = {
     'owner': 'boaz',
@@ -49,8 +49,8 @@ with DAG(
     # 3단계: Athena 테이블 파티션 자동 갱신
     repair_athena_table = AthenaOperator(
         task_id='repair_athena_table',
-        query="MSCK REPAIR TABLE user_data_auto_lake;",
-        database='default',
+        query="MSCK REPAIR TABLE `boaz-track2`;",
+        database='default', # Track 1에서 만든 DB 이름이 'default'가 아니라면 수정이 필요합니다.
         output_location=f"s3://{S3_BUCKET_NAME}/athena-results/",
         aws_conn_id='aws_default'
     )

@@ -8,7 +8,9 @@ x-airflow-common:
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-    # [수정됨] 올바른 규격의 고정 Fernet Key 적용
+    # [보안] 로그 403 에러 방지를 위해 환경 변수로부터 주입 (export 명령 필요)
+    AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-}
+    # [보안] 공용 레포지토리 배포를 위해 Fernet Key는 비워둠
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
     AIRFLOW__CORE__DEFAULT_TIMEZONE: 'Asia/Seoul'
