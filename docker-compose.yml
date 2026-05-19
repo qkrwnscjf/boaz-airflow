@@ -5,14 +5,12 @@ x-airflow-common:
   image: apache/airflow:2.8.1-python3.11
   environment:
     &airflow-common-env
-    # 실습용으로 가벼운 LocalExecutor 사용
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-    # 고정된 Fernet Key 제공 (암호화용)
-    AIRFLOW__CORE__FERNET_KEY: 'boaz_airflow_hands_on_lab_key_12345='
+    # [수정됨] 올바른 규격의 고정 Fernet Key 적용
+    AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
-    # 로컬-컨테이너 간 시간 동기화
     AIRFLOW__CORE__DEFAULT_TIMEZONE: 'Asia/Seoul'
   volumes:
     - ./dags:/opt/airflow/dags
