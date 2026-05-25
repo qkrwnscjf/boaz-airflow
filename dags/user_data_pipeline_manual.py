@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import os
 
 # 실습 시 주의사항: S3_BUCKET_NAME을 본인이 생성한 버킷 이름으로 수정해야 합니다.
-S3_BUCKET_NAME = "boaz-lab"
+S3_BUCKET_NAME = "버킷명 입력"
 
 default_args = {
     'owner': 'boaz',
@@ -24,7 +24,7 @@ with DAG(
 
     @task
     def check_local_data():
-        """1단계: 로컬 폴더(data/)에 준비된 데이터가 있는지 확인합니다."""
+        #[1단계] 로컬 폴더(data/)에 준비된 데이터가 있는지 확인
         local_path = '/opt/airflow/data/data.json'
         if not os.path.exists(local_path):
             raise FileNotFoundError(f"Data file not found at {local_path}")
@@ -33,7 +33,7 @@ with DAG(
 
     @task
     def upload_to_s3(file_path):
-        """2단계: 로컬 파일을 S3의 raw/ 폴더로 업로드합니다."""
+        #[2단계] 로컬 파일을 S3의 raw/ 폴더로 업로드
         hook = S3Hook(aws_conn_id='aws_default')
         s3_key = "raw/user_data/data.json"
         
