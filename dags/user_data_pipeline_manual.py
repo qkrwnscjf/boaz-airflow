@@ -4,8 +4,8 @@ from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from datetime import datetime, timedelta
 import os
 
-# 실습 시 주의사항: S3_BUCKET_NAME을 본인이 생성한 버킷 이름으로 수정해야 합니다.
-S3_BUCKET_NAME = "버킷명 입력"
+# [실습 설정] : 버킷
+S3_BUCKET_NAME = "버킷명을 작성해주세요."
 
 default_args = {
     'owner': 'boaz',

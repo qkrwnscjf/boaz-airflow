@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import os
 
 # [실습 설정] 
-S3_BUCKET_NAME = "버킷명 입력"
+S3_BUCKET_NAME = "버킷명을 작성해주세요."
 NEW_DATABASE_NAME = "boaz_automated_db"
 
 default_args = {
@@ -63,7 +63,7 @@ with DAG(
         task_id='run_glue_crawler',
         config={
             "Name": "boaz_automated_crawler",
-            "Role": "AWSGlueServiceRole-Default", # 사전에 IAM Role이 생성되어 있어야 함 (AWS 관리형 정책 AWSGlueServiceRole 연결 권장)
+            "Role": "GlueS3AccessRole", # 사전에 IAM Role이 생성되어 있어야 함 (AWS 관리형 정책 AWSGlueServiceRole 연결 권장)
             "DatabaseName": NEW_DATABASE_NAME,
             "Targets": {
                 "S3Targets": [
